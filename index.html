@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TestFlow Pro - COMP519 REST API Tester</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --primary-color: #10b981;
+        --primary-dark: #059669;
+        --primary-light: #d1fae5;
+        --secondary-color: #6b7280;
+        --secondary-light: #f3f4f6;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --bg-primary: #ffffff;
+        --bg-secondary: #f9fafb;
+        --border-color: #e5e7eb;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: var(--bg-primary);
+        min-height: 100vh;
+        color: var(--text-primary);
+        overflow-x: hidden;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-color);
+        z-index: 1000;
+        padding: 0;
+      }
+
+      .nav-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 70px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        text-decoration: none;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        list-style: none;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-secondary);
+        font-weight: 500;
+        transition: all 0.2s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--primary-color);
+        background: rgba(16, 185, 129, 0.1);
+      }
+
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 80px 0 0;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(
+          135deg,
+          rgba(16, 185, 129, 0.05) 0%,
+          rgba(255, 255, 255, 0.9) 50%,
+          rgba(107, 114, 128, 0.05) 100%
+        );
+      }
+
+      .hero-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4rem;
+        align-items: center;
+      }
+
+      .hero-content h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(
+          135deg,
+          var(--text-primary),
+          var(--primary-color)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .hero-content p {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+      }
+
+      .hero-stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .test-interface {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-top: 2rem;
+      }
+
+      .interface-header {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .interface-header h2 {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+      }
+
+      .interface-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+      }
+
+      .input-section {
+        margin-bottom: 2rem;
+      }
+
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group label {
+        display: block;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .username-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: "Monaco", "Menlo", "Courier New", monospace;
+        background: var(--bg-primary);
+        transition: all 0.3s ease;
+      }
+
+      .username-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+      }
+
+      .url-preview {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+      }
+
+      .url-preview strong {
+        color: var(--primary-color);
+      }
+
+      .run-button {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .run-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+      }
+
+      .run-button:disabled {
+        background: var(--text-secondary);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .progress-section {
+        display: none;
+        margin-top: 2rem;
+        padding: 2rem;
+        background: var(--bg-secondary);
+        border-radius: 16px;
+        border: 1px solid var(--border-color);
+      }
+
+      .progress-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .progress-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .progress-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .progress-percentage {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        border-radius: 4px;
+        transition: width 0.3s ease;
+        width: 0%;
+      }
+
+      .logs-container {
+        max-height: 300px;
+        overflow-y: auto;
+        background: #1f2937;
+        border-radius: 12px;
+        padding: 1rem;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+
+      .log-entry {
+        margin-bottom: 0.5rem;
+        opacity: 0;
+        animation: logSlide 0.3s ease-out forwards;
+      }
+
+      .log-entry.info {
+        color: #60a5fa;
+      }
+      .log-entry.success {
+        color: #34d399;
+      }
+      .log-entry.warning {
+        color: #fbbf24;
+      }
+      .log-entry.error {
+        color: #f87171;
+      }
+
+      .log-timestamp {
+        color: #9ca3af;
+        margin-right: 0.5rem;
+      }
+
+      .results-section {
+        display: none;
+        margin-top: 2rem;
+        text-align: center;
+      }
+
+      .results-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .success-message {
+        background: linear-gradient(135deg, var(--primary-light), #a7f3d0);
+        border: 1px solid var(--primary-color);
+        color: var(--primary-dark);
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        font-size: 1.125rem;
+        font-weight: 500;
+      }
+
+      .results-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+      }
+
+      .results-actions .download-button {
+        flex: 1;
+        min-width: 200px;
+        max-width: 250px;
+        text-align: center;
+      }
+
+      .download-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        background: linear-gradient(
+          135deg,
+          var(--primary-color),
+          var(--primary-dark)
+        );
+        color: white;
+        text-decoration: none;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+      }
+
+      .download-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(16, 185, 129, 0.4);
+      }
+
+      .view-button {
+        background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+        box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3) !important;
+      }
+
+      .view-button:hover {
+        box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4) !important;
+      }
+
+      .button-description {
+        display: block;
+        font-size: 0.85rem;
+        opacity: 0.8;
+        margin-top: 0.5rem;
+        font-weight: 400;
+      }
+
+      .error-section {
+        display: none;
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border: 1px solid #fca5a5;
+        color: #991b1b;
+        padding: 2rem;
+        border-radius: 16px;
+        margin-top: 2rem;
+      }
+
+      .error-section.active {
+        display: block;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      .endpoints-preview {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.875rem;
+      }
+
+      .endpoints-preview h4 {
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+        font-family: "Inter", sans-serif;
+      }
+
+      .endpoint-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .endpoint-item:last-child {
+        border-bottom: none;
+      }
+
+      .method-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        min-width: 60px;
+        text-align: center;
+      }
+
+      .method-get {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .method-post {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .method-patch {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .method-delete {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .endpoint-path {
+        color: var(--text-secondary);
+        flex-grow: 1;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes logSlide {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 768px) {
+        .nav-container {
+          padding: 0 1rem;
+        }
+
+        .nav-links {
+          display: none;
+        }
+
+        .hero-container {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+          text-align: center;
+        }
+
+        .hero-content h1 {
+          font-size: 2.5rem;
+        }
+
+        .test-interface {
+          padding: 2rem 1.5rem;
+        }
+
+        .hero-stats {
+          justify-content: center;
+        }
+
+        .results-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .results-actions .download-button {
+          max-width: 300px;
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="#" class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-rocket"></i>
+          </div>
+          API Teaster
+        </a>
+        <ul class="nav-links">
+          <li><a href="#home" class="active">Api Tester</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section id="home" class="hero">
+      <div class="hero-container">
+        <div class="hero-content">
+          <h1>REST API Validator</h1>
+          <p>
+            Automated testing for Web Programming Assignment 4. Test your
+            RESTful web service implementation with comprehensive validation
+            scenarios.
+          </p>
+
+          <div class="hero-stats">
+            <div class="stat-item">
+              <span class="stat-number">6</span>
+              <span class="stat-label">Endpoints</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">20+</span>
+              <span class="stat-label">Test Cases</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number">JSON</span>
+              <span class="stat-label">Validation</span>
+            </div>
+          </div>
+
+          <div class="test-interface">
+            <div class="interface-header">
+              <h2><i class="fas fa-play-circle"></i> Test Your API</h2>
+              <p>
+                Enter your University of Liverpool username to test Assignment 4
+                REST API
+              </p>
+            </div>
+
+            <div class="input-section">
+              <div class="input-group">
+                <label for="username">University Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  class="username-input"
+                  placeholder="Enter your username"
+                  oninput="updateURLPreview()"
+                />
+                <div class="url-preview" id="urlPreview">
+                  API Base URL:
+                  <strong
+                    >https://student.csc.liv.ac.uk/~<span id="usernamePreview"
+                      >your_username</span
+                    >/v1</strong
+                  >
+                </div>
+              </div>
+
+              <div class="endpoints-preview">
+                <h4>Endpoints to be tested:</h4>
+                <div class="endpoint-item">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/teams</span>
+                </div>
+                <div class="endpoint-item">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path">/teams/{teamId}/players</span>
+                </div>
+                <div class="endpoint-item">
+                  <span class="method-badge method-get">GET</span>
+                  <span class="endpoint-path"
+                    >/teams/{teamId}/players/{playerId}</span
+                  >
+                </div>
+                <div class="endpoint-item">
+                  <span class="method-badge method-post">POST</span>
+                  <span class="endpoint-path">/teams/{teamId}/players</span>
+                </div>
+                <div class="endpoint-item">
+                  <span class="method-badge method-patch">PATCH</span>
+                  <span class="endpoint-path"
+                    >/teams/{teamId}/players/{playerId}</span
+                  >
+                </div>
+                <div class="endpoint-item">
+                  <span class="method-badge method-delete">DELETE</span>
+                  <span class="endpoint-path"
+                    >/teams/{teamId}/players/{playerId}</span
+                  >
+                </div>
+              </div>
+
+              <button
+                class="run-button"
+                id="runButton"
+                onclick="startTesting()"
+              >
+                <i class="fas fa-rocket"></i>
+                <span id="buttonText">Start API Testing</span>
+                <span
+                  id="buttonSpinner"
+                  class="spinner"
+                  style="display: none"
+                ></span>
+              </button>
+            </div>
+
+            <div class="progress-section" id="progressSection">
+              <div class="progress-header">
+                <div class="progress-title">
+                  <i class="fas fa-cog fa-spin"></i> Testing in Progress
+                </div>
+                <div class="progress-percentage" id="progressPercentage">
+                  0%
+                </div>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+              </div>
+              <div class="logs-container" id="logsContainer"></div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+              <div class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <strong>Testing Complete!</strong><br />
+                Your REST API has been thoroughly tested. View the detailed
+                report to see your compliance with assignment requirements:
+              </div>
+              <div class="results-actions">
+                <a href="#" class="download-button view-button" id="viewButton">
+                  <i class="fas fa-external-link-alt"></i>
+                  View Report
+                  <span class="button-description">Open in new tab</span>
+                </a>
+                <a href="#" class="download-button" id="downloadButton">
+                  <i class="fas fa-download"></i>
+                  Download Report
+                  <span class="button-description">Save to computer</span>
+                </a>
+              </div>
+            </div>
+
+            <div class="error-section" id="errorSection">
+              <h3>
+                <i class="fas fa-exclamation-triangle"></i> Testing Failed
+              </h3>
+              <p id="errorMessage">
+                An error occurred during testing. Please check your username and
+                ensure your API is accessible.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <img
+            src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2015&q=80"
+            alt="API Testing Dashboard"
+          />
+        </div>
+      </div>
+    </section>
+
+    <script>
+      let currentSessionId = null;
+      let pollInterval = null;
+
+      function updateURLPreview() {
+        const username = document.getElementById("username").value.trim();
+        const preview = document.getElementById("usernamePreview");
+
+        if (username) {
+          preview.textContent = username;
+        } else {
+          preview.textContent = "your_username";
+        }
+      }
+
+      function viewReport(sessionId) {
+        window.open(`/report/${sessionId}`, "_blank");
+      }
+
+      async function startTesting() {
+        const username = document.getElementById("username").value.trim();
+
+        if (!username) {
+          alert("Please enter your University username");
+          document.getElementById("username").focus();
+          return;
+        }
+
+        if (!/^[a-zA-Z0-9]+$/.test(username)) {
+          alert("Username should contain only letters and numbers");
+          return;
+        }
+
+        resetUI();
+        showProgress();
+
+        try {
+          const htmlContent = generateCOMP519Documentation(username);
+
+          const requestData = {
+            htmlContent: htmlContent,
+            fileName: `comp519_${username}_api.html`,
+            username: username,
+          };
+
+          const response = await fetch("/api/start-test", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || "Failed to start testing");
+          }
+
+          const result = await response.json();
+          currentSessionId = result.sessionId;
+
+          // Start polling for updates
+          pollInterval = setInterval(pollTestStatus, 1000);
+        } catch (error) {
+          showError(error.message);
+        }
+      }
+
+      function generateCOMP519Documentation(username) {
+        return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>COMP519 REST API Documentation - ${username}</title>
+</head>
+<body>
+    <h1>COMP519 REST API Documentation</h1>
+    <p>Base URL: https://student.csc.liv.ac.uk/~${username}/v1</p>
+    
+    <section name="description">
+        <dl>
+            <dt>Request method for retrieving information on all teams</dt>
+            <dd>GET</dd>
+            
+            <dt>Resource path for retrieving information on all teams</dt>
+            <dd>/teams</dd>
+            
+            <dt>Request method for retrieving information on all players of team {teamId}</dt>
+            <dd>GET</dd>
+            
+            <dt>Resource path for retrieving information on all players of team {teamId}</dt>
+            <dd>/teams/{teamId}/players</dd>
+            
+            <dt>Request method for retrieving information on player {playerId} of team {teamId}</dt>
+            <dd>GET</dd>
+            
+            <dt>Resource path for retrieving information on player {playerId} of team {teamId}</dt>
+            <dd>/teams/{teamId}/players/{playerId}</dd>
+            
+            <dt>Request method for adding a player to team {teamId}</dt>
+            <dd>POST</dd>
+            
+            <dt>Resource path for adding a player to team {teamId}</dt>
+            <dd>/teams/{teamId}/players</dd>
+            
+            <dt>Sample request body for adding a player to team {teamId}</dt>
+            <dd>{"givenNames":"John","familyName":"Doe","nationality":"British","dateOfBirth":"1995-05-15"}</dd>
+            
+            <dt>Request method for updating parts of the information on player {playerId} of team {teamId}</dt>
+            <dd>PATCH</dd>
+            
+            <dt>Resource path for updating parts of the information on player {playerId} of team {teamId}</dt>
+            <dd>/teams/{teamId}/players/{playerId}</dd>
+            
+            <dt>Sample request body for updating parts of the information on player {playerId} of team {teamId}</dt>
+            <dd>{"givenNames":"UpdatedName","nationality":"American"}</dd>
+            
+            <dt>Request method for deleting player {playerId} from team {teamId}</dt>
+            <dd>DELETE</dd>
+            
+            <dt>Resource path for deleting player {playerId} from team {teamId}</dt>
+            <dd>/teams/{teamId}/players/{playerId}</dd>
+        </dl>
+    </section>
+</body>
+</html>`;
+      }
+
+      async function pollTestStatus() {
+        if (!currentSessionId) return;
+
+        try {
+          const response = await fetch(`/api/test-status/${currentSessionId}`);
+          if (!response.ok) throw new Error("Failed to get test status");
+
+          const status = await response.json();
+
+          updateProgress(status.progress);
+          updateLogs(status.logs);
+
+          if (status.completed) {
+            clearInterval(pollInterval);
+
+            if (status.status === "completed") {
+              showResults();
+            } else {
+              showError("Testing failed. Please check the logs for details.");
+            }
+          }
+        } catch (error) {
+          clearInterval(pollInterval);
+          showError("Failed to get test status: " + error.message);
+        }
+      }
+
+      function updateProgress(percentage) {
+        const fill = document.getElementById("progressFill");
+        const text = document.getElementById("progressPercentage");
+
+        fill.style.width = percentage + "%";
+        text.textContent = Math.round(percentage) + "%";
+      }
+
+      function updateLogs(logs) {
+        const container = document.getElementById("logsContainer");
+
+        container.innerHTML = "";
+
+        logs.slice(-20).forEach((log, index) => {
+          const logElement = document.createElement("div");
+          logElement.className = `log-entry ${log.type}`;
+          logElement.style.animationDelay = index * 0.05 + "s";
+
+          const timestamp = new Date(
+            log.timestamp || Date.now()
+          ).toLocaleTimeString();
+          logElement.innerHTML = `<span class="log-timestamp">[${timestamp}]</span>${log.message}`;
+
+          container.appendChild(logElement);
+        });
+
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function showProgress() {
+        document.getElementById("runButton").disabled = true;
+        document.getElementById("buttonText").textContent =
+          "Testing in Progress...";
+        document.getElementById("buttonSpinner").style.display = "inline-block";
+        document.getElementById("progressSection").classList.add("active");
+        document.getElementById("resultsSection").classList.remove("active");
+        document.getElementById("errorSection").classList.remove("active");
+      }
+
+      function showResults() {
+        document.getElementById("progressSection").classList.remove("active");
+        document.getElementById("resultsSection").classList.add("active");
+
+        document.getElementById("viewButton").onclick = () =>
+          viewReport(currentSessionId);
+        document.getElementById(
+          "downloadButton"
+        ).href = `/api/download-report/${currentSessionId}`;
+        document.getElementById(
+          "downloadButton"
+        ).download = `comp519_api_test_report_${currentSessionId}.html`;
+
+        resetButton();
+      }
+
+      function showError(message) {
+        document.getElementById("progressSection").classList.remove("active");
+        document.getElementById("errorSection").classList.add("active");
+        document.getElementById("errorMessage").textContent = message;
+        resetButton();
+      }
+
+      function resetUI() {
+        document.getElementById("progressSection").classList.remove("active");
+        document.getElementById("resultsSection").classList.remove("active");
+        document.getElementById("errorSection").classList.remove("active");
+        updateProgress(0);
+        document.getElementById("logsContainer").innerHTML = "";
+      }
+
+      function resetButton() {
+        document.getElementById("runButton").disabled = false;
+        document.getElementById("buttonText").textContent = "Start API Testing";
+        document.getElementById("buttonSpinner").style.display = "none";
+      }
+
+      document
+        .getElementById("username")
+        .addEventListener("keypress", function (e) {
+          if (
+            e.key === "Enter" &&
+            !document.getElementById("runButton").disabled
+          ) {
+            startTesting();
+          }
+        });
+
+      window.addEventListener("load", function () {
+        document.getElementById("username").focus();
+      });
+
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute("href"));
+          if (target) {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

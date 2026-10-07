@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMP519 Assignment 4 - API Test Report - sgmadedo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+            padding: 20px;
+            margin-right: 320px; /* Space for navigation */
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .student-info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1rem;
+            margin: 1rem;
+            border-radius: 8px;
+        }
+        
+        .content {
+            padding: 2rem;
+        }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .grade-section {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border: 2px solid #dc3545;
+            text-align: center;
+        }
+        
+        .grade-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #721c24;
+            margin: 1rem 0;
+        }
+        
+        .grade-description {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 1rem;
+        }
+        
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .compliance-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 4px solid #28a745;
+        }
+        
+        .compliance-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .compliance-card.error {
+            border-left-color: #dc3545;
+        }
+        
+        .endpoints-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .endpoints-table th,
+        .endpoints-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .endpoints-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .method-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .method-get { background: #dbeafe; color: #1e40af; }
+        .method-post { background: #dcfce7; color: #166534; }
+        .method-patch { background: #fef3c7; color: #92400e; }
+        .method-delete { background: #fee2e2; color: #991b1b; }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pass { background: #dcfce7; color: #166534; }
+        .status-fail { background: #fee2e2; color: #991b1b; }
+        .status-warning { background: #fef3c7; color: #92400e; }
+        .status-error { background: #f3f4f6; color: #374151; }
+        
+        .test-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .test-details.pass {
+            border-left-color: #28a745;
+            background: #f8fff9;
+        }
+        
+        .test-details.fail {
+            border-left-color: #dc3545;
+            background: #fff8f8;
+        }
+        
+        .test-details.warning {
+            border-left-color: #ffc107;
+            background: #fffbf0;
+        }
+        
+        .json-viewer {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+        
+        .recommendations {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .recommendations h3 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+        
+        .recommendations ul {
+            color: #856404;
+            margin-left: 1rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                margin-right: 0;
+                padding: 10px;
+            }
+            
+            .compliance-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .endpoints-table {
+                font-size: 0.875rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media print {
+            body {
+                margin-right: 0;
+                background: white;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> COMP519 Assignment 4</h1>
+            <div class="subtitle">REST API Implementation Test Report</div>
+        </div>
+        
+        <div class="student-info">
+            <strong>Student:</strong> sgmadedo &nbsp;&nbsp;&nbsp;
+            <strong>API Base URL:</strong> https://student.csc.liv.ac.uk/~sgmadedo/v1 &nbsp;&nbsp;&nbsp;
+            <strong>Test Date:</strong> 2025-08-15 18:23:54 &nbsp;&nbsp;&nbsp;
+            <strong>Session ID:</strong> e04496cf...
+        </div>
+        
+        <div class="content">
+            <!-- Grade Summary Section -->
+            <div class="section grade-section" id="grade-summary">
+                <h2><i class="fas fa-award"></i> Overall Assessment</h2>
+                <div class="grade-score">43.8%</div>
+                <div class="grade-description">Needs Improvement - Major COMP519 requirements missing</div>
+                <div style="font-size: 0.9rem; color: #666;">
+                    Based on 16 comprehensive test scenarios
+                </div>
+            </div>
+            
+            <!-- COMP519 Compliance Check -->
+            <div class="section" id="compliance-check">
+                <h2><i class="fas fa-check-circle"></i> COMP519 Requirements Compliance</h2>
+                <div class="compliance-grid">
+                    
+        <div class="compliance-card error">
+            <h4><i class="fas fa-times-circle"></i> Missing Endpoints</h4>
+            <p>✗ Some required endpoints are missing</p>
+        </div>
+        
+        <div class="compliance-card">
+            <h4><i class="fas fa-code"></i> JSON Format</h4>
+            <p>✓ Proper JSON request/response format</p>
+        </div>
+        
+        <div class="compliance-card warning">
+            <h4><i class="fas fa-exclamation-triangle"></i> Status Code Issues</h4>
+            <p>⚠ Some incorrect status codes detected</p>
+        </div>
+        
+        <div class="compliance-card">
+            <h4><i class="fas fa-file-alt"></i> Documentation</h4>
+            <p>✓ Complete API documentation provided</p>
+        </div>
+        
+                </div>
+            </div>
+            
+            <!-- API Endpoints Summary -->
+            <div class="section" id="endpoints-summary">
+                <h2><i class="fas fa-network-wired"></i> API Endpoints Testing</h2>
+                <table class="endpoints-table">
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Tests Run</th>
+                            <th>Status</th>
+                            <th>Success Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/teams</code></td>
+                <td>0/1</td>
+                <td><span class="status-badge status-warning">Issues</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+            <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/teams/{teamId}/players</code></td>
+                <td>0/0</td>
+                <td><span class="status-badge status-fail">Missing</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+            <tr>
+                <td><span class="method-badge method-get">GET</span></td>
+                <td><code>/teams/{teamId}/players/{playerId}</code></td>
+                <td>0/0</td>
+                <td><span class="status-badge status-fail">Missing</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+            <tr>
+                <td><span class="method-badge method-post">POST</span></td>
+                <td><code>/teams/{teamId}/players</code></td>
+                <td>0/0</td>
+                <td><span class="status-badge status-fail">Missing</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+            <tr>
+                <td><span class="method-badge method-patch">PATCH</span></td>
+                <td><code>/teams/{teamId}/players/{playerId}</code></td>
+                <td>0/0</td>
+                <td><span class="status-badge status-fail">Missing</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+            <tr>
+                <td><span class="method-badge method-delete">DELETE</span></td>
+                <td><code>/teams/{teamId}/players/{playerId}</code></td>
+                <td>0/0</td>
+                <td><span class="status-badge status-fail">Missing</span></td>
+                <td>0.0%</td>
+            </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Detailed Test Results -->
+            <div class="section" id="test-results">
+                <h2><i class="fas fa-list-alt"></i> Detailed Test Results</h2>
+                <h3>GET /teams</h3>
+                <div class="test-details warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> GET all teams - should return JSON array with 3 teams</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-warning">WARNING</span></p>
+                    <p><strong>Message:</strong> Status correct but validation issue: Expected 3 teams, got 2</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">[
+  [
+    {
+      "name": "Liverpool",
+      "sport": "Football",
+      "averageAge": 25,
+      "_links": [
+        {
+          "href": "/teams",
+          "method": "GET",
+          "rel": "collection"
+        },
+        {
+          "href": "/teams/1/players",
+          "method": "GET",
+          "rel": "players"
+        }
+      ]
+    },
+    {
+      "name": "Skyhawks",
+      "sport": "Basketball",
+      "averageAge": 29.67,
+      "_links": [
+        {
+          "href": "/teams",
+          "method": "GET",
+          "rel": "collection"
+        },
+        {
+          "href": "/teams/2/players",
+          "method": "GET",
+          "rel": "players"
+        }
+      ]
+    },
+    {
+      "name": "WaveRiders",
+      "sport": "Volleyball",
+      "averageAge": 22.33,
+      "_links": [
+        {
+          "href": "/teams",
+          "method": "GET",
+          "rel": "collection"
+        },
+        {
+          "href": "/teams/3/players",
+          "method": "GET",
+          "rel": "players"
+        }
+      ]
+    }
+  ],
+  200
+]</div>
+                </div>
+                <h3>GET /teams/1/players</h3>
+                <div class="test-details warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> GET players for team 1 - should return JSON array</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-warning">WARNING</span></p>
+                    <p><strong>Message:</strong> Status correct but validation issue: Each player should be a JSON object</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">[
+  [
+    {
+      "surname": "Smith",
+      "givenNames": "TDMTim Phil",
+      "nationality": "GGerman",
+      "dob": "2000-01-01",
+      "_links": [
+        {
+          "href": "/teams/1",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/1/players/1",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/1/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/1/players/1",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/1/players/1",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "surname": "Johnson",
+      "givenNames": "Bob Richard",
+      "nationality": "Canadian",
+      "dob": "1999-06-01",
+      "_links": [
+        {
+          "href": "/teams/1",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/1/players/2",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/1/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/1/players/2",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/1/players/2",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 2
+    },
+    {
+      "surname": "Lou",
+      "givenNames": "Yi Chan",
+      "nationality": "Chinese",
+      "dob": "2001-05-01",
+      "_links": [
+        {
+          "href": "/teams/1",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/1/players/3",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/1/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/1/players/3",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/1/players/3",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 3
+    }
+  ],
+  200
+]</div>
+                </div>
+                <h3>GET /teams/2/players</h3>
+                <div class="test-details warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> GET players for team 2 - should return JSON array</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-warning">WARNING</span></p>
+                    <p><strong>Message:</strong> Status correct but validation issue: Each player should be a JSON object</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">[
+  [
+    {
+      "surname": "Park",
+      "givenNames": "David Young",
+      "nationality": "Korean",
+      "dob": "1995-03-01",
+      "_links": [
+        {
+          "href": "/teams/2",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/2/players/4",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/2/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/2/players/4",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/2/players/4",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 4
+    },
+    {
+      "surname": "Davis",
+      "givenNames": "Emma Trace",
+      "nationality": "Australian",
+      "dob": "1993-08-15",
+      "_links": [
+        {
+          "href": "/teams/2",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/2/players/5",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/2/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/2/players/5",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/2/players/5",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 5
+    },
+    {
+      "surname": "Achim",
+      "givenNames": "Frank Karl",
+      "nationality": "German",
+      "dob": "1996-10-10",
+      "_links": [
+        {
+          "href": "/teams/2",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/2/players/6",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/2/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/2/players/6",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/2/players/6",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 6
+    }
+  ],
+  200
+]</div>
+                </div>
+                <h3>GET /teams/3/players</h3>
+                <div class="test-details warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> GET players for team 3 - should return JSON array</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-warning">WARNING</span></p>
+                    <p><strong>Message:</strong> Status correct but validation issue: Each player should be a JSON object</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">[
+  [
+    {
+      "surname": "Young",
+      "givenNames": "Grace Millie",
+      "nationality": "British",
+      "dob": "2002-09-09",
+      "_links": [
+        {
+          "href": "/teams/3",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/3/players/7",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/3/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/3/players/7",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/3/players/7",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 7
+    },
+    {
+      "surname": "Kumar",
+      "givenNames": "Ravi Kapoor",
+      "nationality": "Inidain",
+      "dob": "2001-12-01",
+      "_links": [
+        {
+          "href": "/teams/3",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/3/players/8",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/3/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/3/players/8",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/3/players/8",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 8
+    },
+    {
+      "surname": "Tadashi",
+      "givenNames": "Akari Aya",
+      "nationality": "Japanese",
+      "dob": "2003-03-03",
+      "_links": [
+        {
+          "href": "/teams/3",
+          "method": "GET",
+          "rel": "teams"
+        },
+        {
+          "href": "/teams/3/players/9",
+          "method": "GET",
+          "rel": "self"
+        },
+        {
+          "href": "/teams/3/players",
+          "method": "POST",
+          "rel": "create"
+        },
+        {
+          "href": "/teams/3/players/9",
+          "method": "PATCH",
+          "rel": "edit"
+        },
+        {
+          "href": "/teams/3/players/9",
+          "method": "DELETE",
+          "rel": "delete"
+        }
+      ],
+      "id": 9
+    }
+  ],
+  200
+]</div>
+                </div>
+                <h3>GET /teams/999/players</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> GET players for non-existent team - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 404</p>
+                    <div class="json-viewer">{
+  "error": "Team ID does not exist."
+}</div>
+                </div>
+                <h3>GET /teams/1/players/1</h3>
+                <div class="test-details warning">
+                    <h4><i class="fas fa-exclamation-triangle"></i> GET specific player - should return player JSON</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-warning">WARNING</span></p>
+                    <p><strong>Message:</strong> Status correct but validation issue: Response should be a JSON object</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">[
+  {
+    "surname": "Smith",
+    "givenNames": "TDMTim Phil",
+    "nationality": "GGerman",
+    "dob": "2000-01-01",
+    "_links": [
+      {
+        "href": "/teams/1",
+        "method": "GET",
+        "rel": "teams"
+      },
+      {
+        "href": "/teams/1/players/1",
+        "method": "GET",
+        "rel": "self"
+      },
+      {
+        "href": "/teams/1/players",
+        "method": "POST",
+        "rel": "create"
+      },
+      {
+        "href": "/teams/1/players/1",
+        "method": "PATCH",
+        "rel": "edit"
+      },
+      {
+        "href": "/teams/1/players/1",
+        "method": "DELETE",
+        "rel": "delete"
+      }
+    ],
+    "id": 1
+  },
+  200
+]</div>
+                </div>
+                <h3>GET /teams/1/players/999</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> GET non-existent player - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 404</p>
+                    <div class="json-viewer">{
+  "error": "Team or player ID does not exist."
+}</div>
+                </div>
+                <h3>POST /teams/1/players</h3>
+                <div class="test-details fail">
+                    <h4><i class="fas fa-times"></i> POST new player with valid data - should return 201</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-fail">FAIL</span></p>
+                    <p><strong>Message:</strong> Expected status 201, got 400</p>
+                    <p><strong>Expected Status:</strong> 201 &nbsp;&nbsp; <strong>Actual Status:</strong> 400</p>
+                    <div class="json-viewer">{
+  "error": "familyName not an attribute of players"
+}</div>
+                </div>
+                
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> POST player with invalid data - should return 400</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 400 &nbsp;&nbsp; <strong>Actual Status:</strong> 400</p>
+                    <div class="json-viewer">{
+  "error": "familyName not an attribute of players"
+}</div>
+                </div>
+                <h3>POST /teams/999/players</h3>
+                <div class="test-details fail">
+                    <h4><i class="fas fa-times"></i> POST player to non-existent team - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-fail">FAIL</span></p>
+                    <p><strong>Message:</strong> Expected status 404, got 400</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 400</p>
+                    <div class="json-viewer">{
+  "error": "familyName not an attribute of players"
+}</div>
+                </div>
+                <h3>PATCH /teams/1/players/1</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> PATCH existing player - should return 200</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 200 &nbsp;&nbsp; <strong>Actual Status:</strong> 200</p>
+                    <div class="json-viewer">{
+  "surname": "Smith",
+  "givenNames": "UpdatedJohn",
+  "nationality": "American",
+  "dob": "2000-01-01",
+  "_links": [
+    {
+      "href": "/teams/1",
+      "method": "GET",
+      "rel": "teams"
+    },
+    {
+      "href": "/teams/1/players/1",
+      "method": "GET",
+      "rel": "self"
+    },
+    {
+      "href": "/teams/1/players",
+      "method": "POST",
+      "rel": "create"
+    },
+    {
+      "href": "/teams/1/players/1",
+      "method": "PATCH",
+      "rel": "edit"
+    },
+    {
+      "href": "/teams/1/players/1",
+      "method": "DELETE",
+      "rel": "delete"
+    }
+  ],
+  "id": 1
+}</div>
+                </div>
+                <h3>PATCH /teams/1/players/999</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> PATCH non-existent player - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 404</p>
+                    <div class="json-viewer">{
+  "error": "Player not found or no changes made"
+}</div>
+                </div>
+                <h3>DELETE /teams/1/players/2</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> DELETE existing player - should return 204</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 204 &nbsp;&nbsp; <strong>Actual Status:</strong> 204</p>
+                    
+                </div>
+                <h3>DELETE /teams/1/players/999</h3>
+                <div class="test-details pass">
+                    <h4><i class="fas fa-check"></i> DELETE non-existent player - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-pass">PASS</span></p>
+                    <p><strong>Message:</strong> Test passed - meets COMP519 requirements</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 404</p>
+                    <div class="json-viewer">{
+  "error": "Player or Team does not exist"
+}</div>
+                </div>
+                <h3>POST /teams</h3>
+                <div class="test-details fail">
+                    <h4><i class="fas fa-times"></i> POST to /teams (not allowed) - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-fail">FAIL</span></p>
+                    <p><strong>Message:</strong> Expected status 404, got 400</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 400</p>
+                    <div class="json-viewer">{
+  "error": "Bad request: Operation not allowed on teams"
+}</div>
+                </div>
+                <h3>PUT /teams/1</h3>
+                <div class="test-details fail">
+                    <h4><i class="fas fa-times"></i> PUT to /teams/1 (not allowed) - should return 404</h4>
+                    <p><strong>Status:</strong> <span class="status-badge status-fail">FAIL</span></p>
+                    <p><strong>Message:</strong> Expected status 404, got 405</p>
+                    <p><strong>Expected Status:</strong> 404 &nbsp;&nbsp; <strong>Actual Status:</strong> 405</p>
+                    <div class="json-viewer">{
+  "error": "Method Not Supported"
+}</div>
+                </div>
+                
+            </div>
+            
+            <!-- Recommendations -->
+            <div class="recommendations"><h3><i class="fas fa-lightbulb"></i> Recommendations</h3><ul><li>Implement all required REST endpoints as specified in the assignment</li><li>Use appropriate HTTP status codes (200, 201, 204, 404, 400) as specified</li><li>Review the assignment requirements and ensure your API matches the specified interface</li><li>Test your API manually using the provided interface.html file</li><li>Add proper error handling for edge cases (non-existent resources, invalid data)</li><li>Ensure your database contains exactly 3 teams with 3 players each initially</li></ul></div>
+        </div>
+        
+        <div class="footer" id="footer">
+            <p>Generated by TestFlow Pro - COMP519 API Validator</p>
+            <p>University of Liverpool - Department of Computer Science</p>
+            <p>This report validates compliance with COMP519 Assignment 4 requirements</p>
+        </div>
+    </div>
+</body>
+</html>
